@@ -216,6 +216,52 @@ const moduleConfig = defineConfig({
 		},
 	],
 });
+const serverConfig = defineConfig({
+  mode: "production",
+  devtool: false,
+  entry: {
+    server: join(__dirname, "src/server/index.ts"),
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+    alias: {
+      "@rewriters": join(__dirname, "src/shared/rewriters"),
+      "@client": join(__dirname, "src/client"),
+      "@": join(__dirname, "src"),
+    },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: "builtin:swc-loader",
+        exclude: ["/node_modules/"],
+        options: {
+          jsc: {
+            parser: { syntax: "typescript" },
+            target: "es2022",
+          },
+          module: {
+            type: "es6",
+            strict: false,
+            strictMode: false,
+          },
+        },
+        type: "javascript/auto",
+      },
+    ],
+  },
+  output: {
+    filename: "server.js",
+    path: join(__dirname, "dist"),
+    libraryTarget: "module",
+  },
+  target: "webworker",
+  experiments: {
+    outputModule: true,
+  },
+});
 
 // Export multiple configurations
-export default [iifeConfig, moduleConfig];
+export default [iifeConfig, moduleConfig, serverConfig];
+

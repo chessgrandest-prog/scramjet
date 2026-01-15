@@ -7,8 +7,7 @@ export async function runtimeFetch(request: Request): Promise<Response> {
 
   const meta: URLMeta = {
     base: url,
-    origin: url,
-    path: url.pathname + url.search
+    origin: url
   };
 
   const cookieStore = new CookieStore();

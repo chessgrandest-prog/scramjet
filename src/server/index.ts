@@ -1,5 +1,7 @@
-import * as Scramjet from "../index";
+import { runtimeFetch } from "./runtime";
 
 export default {
-  fetch: Scramjet.fetch
+  async fetch(request: Request) {
+    return runtimeFetch(request);
+  }
 };

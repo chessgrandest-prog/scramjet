@@ -2,19 +2,29 @@ import { rewriteHtml } from "@rewriters/html";
 import { URLMeta } from "@rewriters/url";
 import { CookieStore } from "@/shared/cookie";
 
-export async function runtimeFetch(request: Request): Promise<Response> {
-  const url = new URL(request.url);
+const UPSTREAM = "https://google.com";
 
+export async function runtimeFetch(request: Request): Promise<Response> {
+  const incoming = new URL(request.url);
+
+  // Build upstream URL
+  const upstreamUrl = new URL(incoming.pathname + incoming.search, UPSTREAM);
+
+  // Build URLMeta (your type only has base + origin)
   const meta: URLMeta = {
-    base: url,
-    origin: url
+    base: upstreamUrl,
+    origin: upstreamUrl
   };
 
   const cookieStore = new CookieStore();
 
-  const upstream = await fetch(url.toString(), request);
+  // Fetch upstream Google page
+  const upstream = await fetch(upstreamUrl.toString(), request);
+
+  // Read body as text
   const text = await upstream.text();
 
+  // Rewrite HTML from the top so scripts are injected
   const rewritten = rewriteHtml(text, cookieStore, meta, true);
 
   return new Response(rewritten, {

@@ -77,13 +77,27 @@ function tryCanParseURL(url: string, origin?: string | URL): URL | null {
 // These two are inherently browser-only; keep them but don’t call them in the worker.
 
 export function rewriteBlob(url: string, meta: URLMeta) {
-  const blob = new URL(url.substring("blob:".length));
-  return "blob:" + meta.origin.origin + blob.pathname;
+  const raw = url.substring("blob:".length).trim();
+
+  try {
+    const blob = new URL(raw);
+    return "blob:" + meta.origin.origin + blob.pathname;
+  } catch {
+    // If it's malformed, don't rewrite it — just return original
+    return url;
+  }
 }
 
+
 export function unrewriteBlob(url: string) {
-  const blob = new URL(url.substring("blob:".length));
-  return "blob:" + location.origin + blob.pathname;
+  const raw = url.substring("blob:".length).trim();
+
+  try {
+    const blob = new URL(raw);
+    return "blob:" + location.origin + blob.pathname;
+  } catch {
+    return url;
+  }
 }
 
 // --- Main rewrite / unrewrite logic ---

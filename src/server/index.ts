@@ -1,5 +1,5 @@
-import { createServer } from "../shared/server";
+import * as Scramjet from "../index";
 
 export default {
-  fetch: createServer().fetch
+  fetch: Scramjet.fetch
 };

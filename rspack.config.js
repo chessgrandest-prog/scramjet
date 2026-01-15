@@ -255,6 +255,7 @@ const serverConfig = defineConfig({
     filename: "server.js",
     path: join(__dirname, "dist"),
     libraryTarget: "module",
+	publicPath: "",
   },
   target: "webworker",
   experiments: {

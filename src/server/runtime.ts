@@ -8,7 +8,10 @@ export async function runtimeFetch(request: Request): Promise<Response> {
   const incoming = new URL(request.url);
 
   // Build upstream URL
-  const upstreamUrl = new URL(incoming.pathname + incoming.search, UPSTREAM);
+  const upstreamUrl = new URL(request.url);
+upstreamUrl.hostname = "google.com";
+upstreamUrl.protocol = "https:";
+
 
   // Build URLMeta (your type only has base + origin)
   const meta: URLMeta = {

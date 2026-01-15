@@ -1,12 +1,14 @@
-import { handleFetch } from "../shared/rewriters";
-import { config } from "../config";
+import { getRewriter } from "../shared/rewriters";
 
 export async function runtimeFetch(request: Request): Promise<Response> {
-  try {
-    return await handleFetch(request, config);
-  } catch (err) {
-    return new Response("Scramjet runtime error: " + (err as Error).message, {
-      status: 500
-    });
-  }
+  const url = new URL(request.url);
+
+  // Fetch upstream
+  const upstream = await fetch(url.toString(), request);
+
+  // Rewrite using Scramjet's rewriter engine
+  const rewriter = getRewriter(url);
+  const rewritten = await rewriter.rewriteResponse(upstream);
+
+  return rewritten;
 }
